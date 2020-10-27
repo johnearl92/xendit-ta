@@ -1,0 +1,113 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "Official-Receipt service API endpoints",
+    "title": "Official-Receipt API.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/account/{id}": {
+      "get": {
+        "summary": "This will get the account with the given ID",
+        "operationId": "Account",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Account"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GenericRes"
+          },
+          "400": {
+            "$ref": "#/responses/JSONErrors"
+          },
+          "500": {
+            "$ref": "#/responses/JSONErrors"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Account": {
+      "type": "object",
+      "properties": {
+        "Username": {
+          "type": "string"
+        }
+      },
+      "x-go-package": "github.com/johnearl92/xendit-ta.git/internal/model"
+    },
+    "GenericResponse": {
+      "description": "GenericResponse generic response",
+      "type": "object",
+      "properties": {
+        "reason": {
+          "type": "string",
+          "x-go-name": "Reason"
+        },
+        "success": {
+          "type": "boolean",
+          "x-go-name": "Success"
+        }
+      },
+      "x-go-package": "github.com/johnearl92/xendit-ta.git/internal/model"
+    },
+    "JSONError": {
+      "description": "JSONError generic response",
+      "type": "object",
+      "properties": {
+        "detail": {
+          "type": "string",
+          "x-go-name": "Detail"
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "x-go-name": "Source"
+        },
+        "status": {
+          "type": "string",
+          "x-go-name": "Status"
+        },
+        "title": {
+          "type": "string",
+          "x-go-name": "Title"
+        }
+      },
+      "x-go-package": "github.com/johnearl92/xendit-ta.git/internal/model/errors"
+    }
+  },
+  "responses": {
+    "GenericRes": {
+      "description": "GenericRes response model",
+      "schema": {
+        "$ref": "#/definitions/GenericResponse"
+      }
+    },
+    "JSONErrors": {
+      "description": "JSONErrors response model",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/JSONError"
+        }
+      }
+    }
+  }
+}
