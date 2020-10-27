@@ -79,6 +79,8 @@ func NewConn(config *DBConfig) (*gorm.DB, error) {
 	if config.Migrate {
 		models := []interface{}{
 			&model.Account{},
+			&model.Organization{},
+			&model.Comment{},
 		}
 
 		if err := db.AutoMigrate(models...).Error; err != nil {
