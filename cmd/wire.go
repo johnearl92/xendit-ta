@@ -19,11 +19,15 @@ func createServer() (*server.APIServer, error) {
 		ProvideDBConfig,
 		db.NewConn,
 		store.NewAccountStore,
+		store.NewCommentStore,
+		store.NewOrganizationStore,
+
 		service.NewXenditService,
 
 		mux.NewRouter,
 		handler.NewXenditHandler,
-		ProvideHandlers,
+
+		ProvideXenditHandlers,
 		ProvideServerConfig,
 		server.NewAPIServer,
 	)
@@ -57,7 +61,7 @@ func ProvideDBConfig() *db.DBConfig {
 	)
 }
 
-// ProvideHandlers handler injection
-func ProvideHandlers(p *handler.XenditHandler) []handler.Routable {
+// ProvideXenditHandlers handler injection
+func ProvideXenditHandlers(p *handler.XenditHandler) []handler.Routable {
 	return []handler.Routable{p}
 }

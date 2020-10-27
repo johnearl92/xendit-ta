@@ -39,12 +39,46 @@
           }
         }
       }
+    },
+    "/orgs/{org-name}/comments": {
+      "post": {
+        "description": "Add comment a given organization",
+        "tags": [
+          "orgs"
+        ],
+        "operationId": "comment",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GenericRes"
+          },
+          "400": {
+            "$ref": "#/responses/JSONErrors"
+          },
+          "500": {
+            "$ref": "#/responses/JSONErrors"
+          }
+        }
+      }
     }
   },
   "definitions": {
     "Account": {
       "type": "object",
       "properties": {
+        "AvatarURL": {
+          "type": "string"
+        },
+        "FollowedNum": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "FollowersNum": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "OrganizationID": {
+          "type": "string"
+        },
         "Username": {
           "type": "string"
         }

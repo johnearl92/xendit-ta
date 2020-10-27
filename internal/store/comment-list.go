@@ -2,30 +2,30 @@ package store
 
 import "github.com/johnearl92/xendit-ta.git/internal/model"
 
-// NewAccountList AccountList provider
-func NewAccountList() *AccountList {
-	list := &AccountList{}
+// NewCommentList CommentList provider
+func NewCommentList() *CommentList {
+	list := &CommentList{}
 	list.Init()
 	return list
 }
 
-// AccountList list definition
-type AccountList struct {
+// CommentList list definition
+type CommentList struct {
 	BaseList
-	items []*model.Account
+	items []*model.Comment
 }
 
 // Model model to use for db
-func (p *AccountList) Model() model.Model {
-	return &model.Account{}
+func (p *CommentList) Model() model.Model {
+	return &model.Comment{}
 }
 
 // ItemsPtr pointer items in the list
-func (p *AccountList) ItemsPtr() interface{} {
+func (p *CommentList) ItemsPtr() interface{} {
 	return &p.items
 }
 
 // Items items in the list
-func (p *AccountList) Items() []*model.Account {
+func (p *CommentList) Items() []*model.Comment {
 	return p.items
 }
