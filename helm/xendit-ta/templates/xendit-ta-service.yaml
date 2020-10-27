@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "xendit-ta.name" . }}-api-svc
+  labels:
+    app.kubernetes.io/name: {{ template "xendit-ta.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: helm
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  type: "{{ .Values.service.type }}"
+  selector:
+    app: {{ template "xendit-ta.name" . }}
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+    name: http
+  {{- if eq .Values.service.type "NodePort" }}
+    nodePort: {{ .Values.service.nodePort }}
+  {{- end }}

@@ -1,0 +1,23 @@
+version: '3'
+services:
+  postgres:
+    container_name: xendit-db
+    image: postgres:11.2-alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: xendit
+      POSTGRES_USER: xendit
+      POSTGRES_PASSWORD: xendit
+    # volumes:
+      # - ./volume/postgres/data:/var/lib/postgresql/data
+  xendit-ta:
+    container_name: xendit-ta
+    image: jagbay01/xendit-ta:latest
+    build: .
+    restart: on-failure
+    volumes:
+      # - ./config:/nonexistent
+      - ./config:/nonexistent
+    ports:
+      - 8080:8080

@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "xendit-ta.name" . }}
+  labels:
+    {{- if .Values.extraLabels }}
+    {{- range $k, $v := .Values.extraLabels }}
+    {{ $k }}: {{ $v }}
+    {{- end }}
+    {{- end }}
+    app.kubernetes.io/name: {{ template "xendit-ta.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: helm
+    helm.sh/chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ template "xendit-ta.name" . }}
+      name: {{ template "xendit-ta.name" . }}
+  template:
+    metadata:
+      labels:
+        {{- if .Values.extraLabels }}
+        {{- range $k, $v := .Values.extraLabels }}
+        {{ $k }}: {{ $v }}
+        {{- end }}
+        {{- end }}
+        app: {{ template "xendit-ta.name" . }}
+        name: {{ template "xendit-ta.name" . }}
+    spec:
+      imagePullPolicy: {{ .Values.image.pullPolicy }}
+      imagePullSecrets:
+      - name: "xendit-ta-registry"
+      {{- if .Values.affinity }}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: {{ .Values.affinity.key }}
+                operator: In
+                values:
+                {{- range .Values.affinity.values }}
+                - {{ . }}
+                {{- end }}
+      {{- end }}
+      containers:
+      - name: {{ template "xendit-ta.name" . }}
+        image: "{{ .Values.image.name }}:{{ .Values.image.tag }}"
+        volumeMounts:
+        - name: config
+          mountPath: /nonexistent
+        resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+        ports:
+        - containerPort: 8080
+          name: app
+        readinessProbe:
+          httpGet:
+            path: /swagger-ui/#/
+            port: app
+          initialDelaySeconds: {{ .Values.readinessProbe.delay }}
+          periodSeconds: {{ .Values.readinessProbe.interval }}
+          timeoutSeconds: {{ .Values.readinessProbe.timeout }}
+        livenessProbe:
+          httpGet:
+            path: /swagger-ui/#/
+            port: app
+          initialDelaySeconds: {{ .Values.livenessProbe.delay }}
+          periodSeconds: {{ .Values.livenessProbe.interval }}
+          timeoutSeconds: {{ .Values.livenessProbe.timeout }}
+      volumes:
+      - name: config
+        secret:
+          secretName: {{ template "xendit-ta.name" . }}-api-config

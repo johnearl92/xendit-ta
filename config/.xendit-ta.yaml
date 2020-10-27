@@ -1,0 +1,33 @@
+server:
+  host: xendit-ta
+  port: 8080
+  url: https://xendit-ta
+  cors:
+    allowedOrigins:
+    - '*'
+    allowedHeaders:
+    - Content-Type
+    - Sec-Fetch-Dest
+    - Referer
+    - accept
+    - User-Agent
+    allowedMethods:
+    - POST
+    - GET
+    - OPTIONS
+    - HEAD
+
+log:
+  level: "debug"
+
+db:
+  host: postgres
+  port: 5432
+  username: xendit
+  password: xendit
+  name: xendit
+  pool:
+    minOpen: 10
+    maxOpen: 100
+  migrate: true
+  logMode: true

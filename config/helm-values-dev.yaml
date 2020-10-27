@@ -1,0 +1,91 @@
+#
+# To add a docker registry follow the format below. This should be added during deployment
+#
+# registries:
+# - url: https://harbor.amihan.net
+#  username: changeme
+#  password: changeme
+#- url: quay.io
+#  username: username
+#  password: password
+
+replicas: 1
+
+service:
+  type: ClusterIP
+
+image: 
+  name: jagbay01/xendit-ta
+  tag: latest
+  pullPolicy: Always
+
+resources: {}
+# this should be set by the one who deploys the app
+#  requests:
+#    cpu: "100m"
+#    memory: "32Mi"
+#  limits:
+#    cpu: "1"
+#    memory: "512Mi"
+livenessProbe:
+  interval: 60
+  delay: 15
+  timeout: 180
+readinessProbe:
+  interval: 60
+  delay: 15
+  timeout: 180
+
+config:
+  server:
+    host: 0.0.0.0
+    port: 8080
+    url: https://xendit-ta
+    cors:
+      allowedOrigins:
+      - '*'
+      allowedHeaders:
+      - Content-Type
+      - Sec-Fetch-Dest
+      - Referer
+      - accept
+      - User-Agent
+      allowedMethods:
+      - POST
+      - GET
+      - OPTIONS
+      - HEAD
+  log:
+    level: "debug"
+  db:
+    host: postgres
+    port: 5432
+    username: xendit
+    password: xendit
+    name: postgres
+    pool:
+      minOpen: 10
+      maxOpen: 100
+    migrate: true
+    logMode: true
+
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/cors-allow-headers: DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Accept
+    nginx.ingress.kubernetes.io/cors-allow-methods: GET, PUT, POST, DELETE, PATCH,
+      OPTIONS
+    nginx.ingress.kubernetes.io/cors-allow-origin: '*'
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+  hosts:
+    - host: xendit-ta
+      paths:
+        - /
+  tls:
+    - secretName: xendit-ta
+      hosts:
+        - xendit-ta

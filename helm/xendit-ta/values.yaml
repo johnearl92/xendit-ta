@@ -1,0 +1,56 @@
+#
+# To add a docker registry follow the format below. This should be added during deployment
+#
+# registries:
+#- url: https://harbor.amihan.net
+#  username: changeme
+#  password: changeme
+#- url: quay.io
+#  username: username
+#  password: password
+
+replicas: 1
+
+service:
+  type: ClusterIP
+
+image: 
+  name: jagbay01/xendit-ta
+  tag: latest
+  pullPolicy: Always
+
+resources: {}
+# this should be set by the one who deploys the app
+#  requests:
+#    cpu: "100m"
+#    memory: "32Mi"
+#  limits:
+#    cpu: "1"
+#    memory: "512Mi"
+livenessProbe:
+  interval: 60
+  delay: 15
+  timeout: 180
+readinessProbe:
+  interval: 60
+  delay: 15
+  timeout: 180
+
+config:
+  server:
+    host: '0.0.0.0'
+    port: 8080
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: "nginx"
+  hosts:
+    - host: xendit-ta.jhoocified.com
+      paths:
+        - /
+  tls:
+    - secretName: xendit-ta-tls-dev
+      hosts:
+        - xendit-ta.jhoocified.com

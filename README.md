@@ -20,7 +20,8 @@ This is a project implementation of the technical assessment
 ### Deployment
 
 - Docker Compose
-- Kubernetes (minikube)
+- Kubernetes
+- Minikube
 - Helm
 
 ## Build
@@ -101,3 +102,12 @@ To add dependencies, run the following:
 go get -u {dependency}
 make deps
 ``` 
+
+
+### Docker Compose Deployment
+```shell
+make package start
+```
+
+package - will create the docker image
+start - will start the docker-compose 
