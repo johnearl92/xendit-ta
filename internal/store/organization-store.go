@@ -22,6 +22,7 @@ type OrganizationStore interface {
 	Create(organization *model.Organization, opts GetOpts) error
 	Update(organization *model.Organization) error
 	Get(id string, opts GetOpts) (*model.Organization, error)
+	FindByName(id string, opts GetOpts) (*model.Organization, error)
 }
 
 func (p *organizationStore) Create(organization *model.Organization, opts GetOpts) error {
@@ -38,12 +39,24 @@ func (p *organizationStore) Update(organization *model.Organization) error {
 
 func (p *organizationStore) Get(id string, opts GetOpts) (*model.Organization, error) {
 	db := p.DB.Where("id = ?", id)
-	receipt, err := p.Find(db, &model.Comment{}, opts)
+	org, err := p.Find(db, &model.Organization{}, opts)
 
 	if err != nil {
 		log.Error(err.Error())
 		return nil, err
 	}
 
-	return receipt.(*model.Organization), nil
+	return org.(*model.Organization), nil
+}
+
+func (p *organizationStore) FindByName(name string, opts GetOpts) (*model.Organization, error) {
+	db := p.DB.Where("name = ?", name)
+	org, err := p.Find(db, &model.Organization{}, opts)
+
+	if err != nil {
+		log.Error(err.Error())
+		return nil, err
+	}
+
+	return org.(*model.Organization), nil
 }

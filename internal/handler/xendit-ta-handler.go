@@ -17,6 +17,7 @@ import (
 	"fmt"
 	"github.com/johnearl92/xendit-ta.git/internal/model"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
@@ -58,9 +59,38 @@ func (h *XenditHandler) Register(router *mux.Router) {
 	router.Handle("/account/{id}", getAccount(h.xenditService)).Methods(http.MethodGet)
 	log.Info("[GET] /account/{id} registered")
 
-	// swagger:operation POST /orgs/{org-name}/comments orgs comment
-	// Add comment a given organization
+	// swagger:operation GET  /orgs/{org}/comments CommentResponse
 	// ---
+	// summary: This will get all the comments in an organization
+	// parameters:
+	// - name: org
+	//   in: path
+	//   required: true
+	//   type: string
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/CommentResponse"
+	//   "400":
+	//     "$ref": "#/responses/JSONErrors"
+	//   "500":
+	//     "$ref": "#/responses/JSONErrors"
+	router.Handle("/orgs/{org}/comments", getComments(h.xenditService)).Methods(http.MethodGet)
+	log.Info("[GET] /orgs/{org}/comments registered")
+
+	// swagger:operation POST /orgs/{org}/comments org CommentReq
+	// Add comment to an organization
+	// ---
+	// parameters:
+	// - name: org
+	//   in: path
+	//   required: true
+	//   schema:
+	//     type: string
+	// - name: CommentReq
+	//   in: body
+	//   required: true
+	//   schema:
+	//     $ref: "#/definitions/CommentReq"
 	// responses:
 	//   "200":
 	//     "$ref": "#/responses/GenericRes"
@@ -71,6 +101,38 @@ func (h *XenditHandler) Register(router *mux.Router) {
 	router.Handle("/orgs/{org}/comments", addComment(h.xenditService)).Methods(http.MethodPost)
 	log.Info("[POST] /e-or/generate registered")
 
+}
+
+func getComments(xenditService service.XenditService) http.HandlerFunc {
+	return func(res http.ResponseWriter, req *http.Request) {
+		log.Debugln("invoke addComment")
+		vars := mux.Vars(req)
+		log.Infof("Getting Comments of Organization: %s", vars["org"])
+		// TODO return list of comments
+
+		commentList, err := xenditService.FindCommentsByOrg(strings.ToLower(vars["org"]), nil)
+
+		if err != nil {
+			log.Error(err.Error())
+			utils.WriteServerError(res, "/orgs/{org}/comments", "Failed to get Comments",
+				fmt.Sprintf("Failed to get Comments. Please check organization name or contact the administrator. Error: %s", err.Error()))
+			return
+		}
+
+		var comments []string
+
+		for _, v := range commentList.Items() {
+			comments = append(comments, v.Message)
+		}
+
+		commentResponse := &model.CommentResponse{
+			Comments: comments,
+		}
+
+		log.Debugln("end getComments")
+		utils.WriteEntity(res, http.StatusOK, commentResponse)
+
+	}
 }
 
 func addComment(xenditService service.XenditService) http.HandlerFunc {
@@ -93,7 +155,7 @@ func addComment(xenditService service.XenditService) http.HandlerFunc {
 		}
 
 		log.Infoln("Getting Organization")
-		if org, err := xenditService.GetOrganization(vars["org"], nil); err != nil {
+		if org, err := xenditService.FindByOrgName(strings.ToLower(vars["org"]), nil); err != nil {
 			log.Error(err.Error())
 			utils.WriteServerError(res, "/orgs/{org}/comments", "Failed to Organization",
 				fmt.Sprintf("Failed to get Organization, it might not exist. Please contact the administrator. Error: %s", err.Error()))

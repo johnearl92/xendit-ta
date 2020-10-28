@@ -4,11 +4,11 @@
 # Don't change anything beyond this block if not deemed necessary
 #
 #################################################################
-DOCKER_REGISTRY=q
+DOCKER_REGISTRY=
 APP=xendit-ta
 VERSION=latest
 TAG=latest
-PROJECT=amihan
+PROJECT=jagbay01
 IMAGE=${DOCKER_REGISTRY}${PROJECT}/${APP}:${TAG}
 
 NAMESPACE=xendit-ta
@@ -56,7 +56,7 @@ generate-swagger:
 	@swagger mixin ./swagger/swagger-generated.json ./swagger/${SWAGGER_HOST} -o ./swagger/swagger.json
 	@echo 'Done.'
 
-build: deps wire gen generate-swagger
+build: deps gen generate-swagger
 	@echo '========================================'
 	@echo ' Building project'
 	@echo '========================================'

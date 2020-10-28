@@ -4,6 +4,7 @@ package service
 import (
 	"github.com/johnearl92/xendit-ta.git/internal/model"
 	"github.com/johnearl92/xendit-ta.git/internal/store"
+	"strings"
 )
 
 // xenditService EOR service definition
@@ -31,10 +32,12 @@ type XenditService interface {
 	CreateOrganization(organization *model.Organization, opts store.GetOpts) error
 	UpdateOrganization(organization *model.Organization) error
 	GetOrganization(id string, opts store.GetOpts) (*model.Organization, error)
+	FindByOrgName(name string, opts store.GetOpts) (*model.Organization, error)
 
 	CreateComment(comment *model.Comment, opts store.GetOpts) error
 	UpdateComment(comment *model.Comment) error
 	GetComment(id string, opts store.GetOpts) (*model.Comment, error)
+	FindCommentsByOrg(orgName string, opts store.ListOpts) (*store.CommentList, error)
 }
 
 // Create saves receipts in database
@@ -67,6 +70,11 @@ func (p *xenditService) GetOrganization(id string, opts store.GetOpts) (*model.O
 	return p.orgStore.Get(id, opts)
 }
 
+// Get find a specific receipt in database
+func (p *xenditService) FindByOrgName(name string, opts store.GetOpts) (*model.Organization, error) {
+	return p.orgStore.FindByName(name, opts)
+}
+
 // Create saves receipts in database
 func (p *xenditService) CreateComment(comment *model.Comment, opts store.GetOpts) error {
 	return p.commentStore.Create(comment, opts)
@@ -80,4 +88,13 @@ func (p *xenditService) UpdateComment(comment *model.Comment) error {
 // Get find a specific receipt in database
 func (p *xenditService) GetComment(id string, opts store.GetOpts) (*model.Comment, error) {
 	return p.commentStore.Get(id, opts)
+}
+
+// FindCommentsByOrg find all comments by org
+func (p *xenditService) FindCommentsByOrg(orgName string, opts store.ListOpts) (*store.CommentList, error) {
+	org, err := p.FindByOrgName(strings.ToLower(orgName), nil)
+	if err != nil {
+		return nil, err
+	}
+	return p.commentStore.ListByOrgID(org.ID, opts)
 }

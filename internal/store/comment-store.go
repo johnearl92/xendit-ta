@@ -22,6 +22,7 @@ type CommentStore interface {
 	Create(comment *model.Comment, opts GetOpts) error
 	Update(comment *model.Comment) error
 	Get(id string, opts GetOpts) (*model.Comment, error)
+	ListByOrgID(orgID string, opts ListOpts) (*CommentList, error)
 }
 
 func (p *commentStore) Create(comment *model.Comment, opts GetOpts) error {
@@ -38,12 +39,24 @@ func (p *commentStore) Update(comment *model.Comment) error {
 
 func (p *commentStore) Get(id string, opts GetOpts) (*model.Comment, error) {
 	db := p.DB.Where("id = ?", id)
-	receipt, err := p.Find(db, &model.Comment{}, opts)
+	comment, err := p.Find(db, &model.Comment{}, opts)
 
 	if err != nil {
 		log.Error(err.Error())
 		return nil, err
 	}
 
-	return receipt.(*model.Comment), nil
+	return comment.(*model.Comment), nil
+}
+
+func (p *commentStore) ListByOrgID(orgID string, opts ListOpts) (*CommentList, error) {
+	list := NewCommentList()
+	db := p.DB.Where("organization_id = ? AND is_deleted = false", orgID)
+	err := p.BaseStore.FindAll(db, list, opts)
+
+	if err != nil {
+		log.Error(err.Error())
+		return nil, err
+	}
+	return list, nil
 }

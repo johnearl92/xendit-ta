@@ -40,13 +40,54 @@
         }
       }
     },
-    "/orgs/{org-name}/comments": {
-      "post": {
-        "description": "Add comment a given organization",
-        "tags": [
-          "orgs"
+    "/orgs/{org}/comments": {
+      "get": {
+        "summary": "This will get all the comments in an organization",
+        "operationId": "CommentResponse",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "org",
+            "in": "path",
+            "required": true
+          }
         ],
-        "operationId": "comment",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CommentResponse"
+          },
+          "400": {
+            "$ref": "#/responses/JSONErrors"
+          },
+          "500": {
+            "$ref": "#/responses/JSONErrors"
+          }
+        }
+      },
+      "post": {
+        "description": "Add comment to an organization",
+        "tags": [
+          "org"
+        ],
+        "operationId": "CommentReq",
+        "parameters": [
+          {
+            "name": "org",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "CommentReq",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CommentReq"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "$ref": "#/responses/GenericRes"
@@ -81,6 +122,31 @@
         },
         "Username": {
           "type": "string"
+        }
+      },
+      "x-go-package": "github.com/johnearl92/xendit-ta.git/internal/model"
+    },
+    "CommentReq": {
+      "description": "CommentReq comment request data structure",
+      "type": "object",
+      "properties": {
+        "comment": {
+          "type": "string",
+          "x-go-name": "Comment"
+        }
+      },
+      "x-go-package": "github.com/johnearl92/xendit-ta.git/internal/model"
+    },
+    "CommentResponse": {
+      "description": "CommentResponse comments response",
+      "type": "object",
+      "properties": {
+        "comments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "Comments"
         }
       },
       "x-go-package": "github.com/johnearl92/xendit-ta.git/internal/model"
@@ -128,6 +194,12 @@
     }
   },
   "responses": {
+    "CommentResponse": {
+      "description": "CommentResWrapper wrapper struct for CommentRes",
+      "schema": {
+        "$ref": "#/definitions/CommentResponse"
+      }
+    },
     "GenericRes": {
       "description": "GenericRes response model",
       "schema": {

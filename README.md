@@ -35,6 +35,13 @@ make build
 
 The binary will be located in: `build/bin/xendit-ta`
 
+
+### Docker Compose Deployment
+```shell
+make start
+```
+
+
 ## Configuration
 
 Configuration is handled by [viper](https://github.com/spf13/viper) which allows configuration using a config file or by environment variables.
@@ -104,10 +111,6 @@ make deps
 ``` 
 
 
-### Docker Compose Deployment
-```shell
-make package start
-```
 
 package - will create the docker image
 start - will start the docker-compose 

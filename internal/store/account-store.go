@@ -36,29 +36,14 @@ func (p *accountStore) Update(account *model.Account) error {
 	return db
 }
 
-// fFindByOrNum ind latest receipt by the given OR number
-func (p *accountStore) FindByOrNum(orNum string) (*model.Account, error) {
-	log.Debug("FindByOrNum Invoke")
-	db := p.DB.Order("version").Where("or_number = ?", orNum)
-	var account model.Account
-
-	if err := db.Last(&account).Error; err != nil {
-		log.Error(err.Error())
-		return nil, err
-	}
-
-	log.Debug("FindByOrNum End")
-	return &account, nil
-}
-
 func (p *accountStore) Get(id string, opts GetOpts) (*model.Account, error) {
 	db := p.DB.Where("id = ?", id)
-	receipt, err := p.Find(db, &model.Account{}, opts)
+	acct, err := p.Find(db, &model.Account{}, opts)
 
 	if err != nil {
 		log.Error(err.Error())
 		return nil, err
 	}
 
-	return receipt.(*model.Account), nil
+	return acct.(*model.Account), nil
 }
