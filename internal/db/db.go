@@ -88,7 +88,7 @@ func NewConn(config *DBConfig) (*gorm.DB, error) {
 			return nil, err
 		}
 
-		if err = RunOrgMigration(db); err != nil {
+		if err = RunMigration(db); err != nil {
 			log.Error(err.Error())
 			return nil, err
 		}

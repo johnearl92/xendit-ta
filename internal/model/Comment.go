@@ -10,6 +10,11 @@ type Comment struct {
 	OrganizationID string
 }
 
+// GetFST returns field FST value.
+func (p *Comment) Delete() {
+	p.IsDeleted = true
+}
+
 // CommentReq comment request data structure
 type CommentReq struct {
 	Comment string `json:"comment"`

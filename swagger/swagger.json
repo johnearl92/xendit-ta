@@ -103,6 +103,54 @@
             "$ref": "#/responses/JSONErrors"
           }
         }
+      },
+      "delete": {
+        "summary": "This will delete all the comments in an organization",
+        "operationId": "Comment",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "org",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GenericRes"
+          },
+          "400": {
+            "$ref": "#/responses/JSONErrors"
+          },
+          "500": {
+            "$ref": "#/responses/JSONErrors"
+          }
+        }
+      }
+    },
+    "/orgs/{org}/members": {
+      "get": {
+        "summary": "This will get all the members in an organization",
+        "operationId": "AccountResponse",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "org",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AccountResponse"
+          },
+          "400": {
+            "$ref": "#/responses/JSONErrors"
+          },
+          "500": {
+            "$ref": "#/responses/JSONErrors"
+          }
+        }
       }
     }
   },
@@ -126,6 +174,20 @@
         },
         "Username": {
           "type": "string"
+        }
+      },
+      "x-go-package": "github.com/johnearl92/xendit-ta.git/internal/model"
+    },
+    "AccountResponse": {
+      "description": "AccountResponse comments response",
+      "type": "object",
+      "properties": {
+        "accounts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Account"
+          },
+          "x-go-name": "Accounts"
         }
       },
       "x-go-package": "github.com/johnearl92/xendit-ta.git/internal/model"
@@ -198,6 +260,12 @@
     }
   },
   "responses": {
+    "AccountResponse": {
+      "description": "AccountResWrapperv wrapper struct for AccountResponse",
+      "schema": {
+        "$ref": "#/definitions/AccountResponse"
+      }
+    },
     "CommentResponse": {
       "description": "CommentResWrapper wrapper struct for CommentRes",
       "schema": {

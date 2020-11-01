@@ -22,6 +22,7 @@ type AccountStore interface {
 	Create(account *model.Account, opts GetOpts) error
 	Update(account *model.Account) error
 	Get(id string, opts GetOpts) (*model.Account, error)
+	ListByOrgID(orgID string, opts ListOpts) (*AccountList, error)
 }
 
 func (p *accountStore) Create(account *model.Account, opts GetOpts) error {
@@ -46,4 +47,16 @@ func (p *accountStore) Get(id string, opts GetOpts) (*model.Account, error) {
 	}
 
 	return acct.(*model.Account), nil
+}
+
+func (p *accountStore) ListByOrgID(orgID string, opts ListOpts) (*AccountList, error) {
+	list := NewAccountList()
+	db := p.DB.Where("organization_id = ?", orgID)
+	err := p.BaseStore.FindAll(db, list, opts)
+
+	if err != nil {
+		log.Error(err.Error())
+		return nil, err
+	}
+	return list, nil
 }

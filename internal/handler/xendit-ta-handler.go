@@ -16,6 +16,7 @@ package handler
 import (
 	"fmt"
 	"github.com/johnearl92/xendit-ta.git/internal/model"
+	"github.com/johnearl92/xendit-ta.git/internal/store"
 	"net/http"
 	"strings"
 
@@ -77,6 +78,42 @@ func (h *XenditHandler) Register(router *mux.Router) {
 	router.Handle("/orgs/{org}/comments", getComments(h.xenditService)).Methods(http.MethodGet)
 	log.Info("[GET] /orgs/{org}/comments registered")
 
+	// swagger:operation GET  /orgs/{org}/members AccountResponse
+	// ---
+	// summary: This will get all the members in an organization
+	// parameters:
+	// - name: org
+	//   in: path
+	//   required: true
+	//   type: string
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/AccountResponse"
+	//   "400":
+	//     "$ref": "#/responses/JSONErrors"
+	//   "500":
+	//     "$ref": "#/responses/JSONErrors"
+	router.Handle("/orgs/{org}/members", getMembers(h.xenditService)).Methods(http.MethodGet)
+	log.Info("[GET] /orgs/{org}/comments registered")
+
+	// swagger:operation DELETE /orgs/{org}/comments Comment
+	// ---
+	// summary: This will delete all the comments in an organization
+	// parameters:
+	// - name: org
+	//   in: path
+	//   required: true
+	//   type: string
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/GenericRes"
+	//   "400":
+	//     "$ref": "#/responses/JSONErrors"
+	//   "500":
+	//     "$ref": "#/responses/JSONErrors"
+	router.Handle("/orgs/{org}/comments", deleteComments(h.xenditService)).Methods(http.MethodDelete)
+	log.Info("[DELETE] /orgs/{org}/comments registered")
+
 	// swagger:operation POST /orgs/{org}/comments org CommentReq
 	// Add comment to an organization
 	// ---
@@ -131,6 +168,82 @@ func getComments(xenditService service.XenditService) http.HandlerFunc {
 
 		log.Debugln("end getComments")
 		utils.WriteEntity(res, http.StatusOK, commentResponse)
+
+	}
+}
+func getMembers(xenditService service.XenditService) http.HandlerFunc {
+	return func(res http.ResponseWriter, req *http.Request) {
+		log.Debugln("invoke getMembers")
+		vars := mux.Vars(req)
+		log.Infof("Getting Members of Organization: %s", vars["org"])
+		var sorts []*store.Sort
+		sort := store.NewSort("followers_num", store.SortOrderDesc)
+		sorts = append(sorts, sort)
+		listOpts := store.NewListOpts()
+		listOpts.SetSort(sorts)
+
+		accountList, err := xenditService.FindAccountsByOrg(strings.ToLower(vars["org"]), listOpts)
+
+		if err != nil {
+			log.Error(err.Error())
+			utils.WriteServerError(res, "/orgs/{org}/comments", "Failed to get Accounts",
+				fmt.Sprintf("Failed to get Accounts. Please check organization name or contact the administrator. Error: %s", err.Error()))
+			return
+		}
+
+		var members []model.Account
+
+		for _, v := range accountList.Items() {
+			members = append(members, *v)
+		}
+
+		accountResponse := &model.AccountResponse{
+			Accounts: members,
+		}
+
+		log.Debugln("end getMembers")
+		utils.WriteEntity(res, http.StatusOK, accountResponse)
+
+	}
+}
+
+func deleteComments(xenditService service.XenditService) http.HandlerFunc {
+	return func(res http.ResponseWriter, req *http.Request) {
+		log.Debugln("invoke deleteComments")
+		vars := mux.Vars(req)
+		log.Infof("Getting Comments of Organization: %s", vars["org"])
+		// TODO return list of comments
+
+		commentList, err := xenditService.FindCommentsByOrg(strings.ToLower(vars["org"]), nil)
+
+		if err != nil {
+			log.Error(err.Error())
+			utils.WriteServerError(res, "/orgs/{org}/comments", "Failed to get Comments",
+				fmt.Sprintf("Failed to get Comments. Please check organization name or contact the administrator. Error: %s", err.Error()))
+			return
+		}
+
+		log.Debugf("Deleting comments: %d", commentList.Total())
+
+		comments := commentList.Items()
+
+		for k := range comments {
+			comment := comments[k]
+			comment.Delete()
+			if err := xenditService.UpdateComment(comment); err != nil {
+				log.Error(err.Error())
+				utils.WriteServerError(res, "/orgs/{org}/comments", "Failed to Delete Comments",
+					fmt.Sprintf("Failed to Delete Comments. Please check organization name or contact the administrator. Error: %s", err.Error()))
+				return
+			}
+		}
+
+		resp := &model.GenericResponse{
+			Success: true,
+		}
+
+		log.Debugln("end getComments")
+		utils.WriteEntity(res, http.StatusOK, resp)
 
 	}
 }

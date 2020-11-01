@@ -28,6 +28,7 @@ type XenditService interface {
 	CreateAccount(account *model.Account, opts store.GetOpts) error
 	UpdateAccount(account *model.Account) error
 	GetAccount(id string, opts store.GetOpts) (*model.Account, error)
+	FindAccountsByOrg(orgName string, opts store.ListOpts) (*store.AccountList, error)
 
 	CreateOrganization(organization *model.Organization, opts store.GetOpts) error
 	UpdateOrganization(organization *model.Organization) error
@@ -97,4 +98,13 @@ func (p *xenditService) FindCommentsByOrg(orgName string, opts store.ListOpts) (
 		return nil, err
 	}
 	return p.commentStore.ListByOrgID(org.ID, opts)
+}
+
+// FindAccountsByOrg find all members by org
+func (p *xenditService) FindAccountsByOrg(orgName string, opts store.ListOpts) (*store.AccountList, error) {
+	org, err := p.FindByOrgName(strings.ToLower(orgName), nil)
+	if err != nil {
+		return nil, err
+	}
+	return p.acctStore.ListByOrgID(org.ID, opts)
 }

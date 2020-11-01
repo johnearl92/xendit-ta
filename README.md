@@ -4,6 +4,13 @@ XENDIT Technical Assessment
 This is a project implementation of the technical assessment 
 
 
+## Before start
+### DB Migration Mocks
+- Organization
+    - xendit
+- Members
+
+
 ## Prerequisire
 
 ### Workspace
