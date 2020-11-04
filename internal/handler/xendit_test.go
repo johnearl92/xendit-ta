@@ -1,7 +1,6 @@
-package test
+package handler
 
 import (
-	"github.com/johnearl92/xendit-ta.git/internal/handler"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"net/http"
@@ -11,7 +10,7 @@ import (
 
 type XenditTestSuite struct {
 	suite.Suite
-	h *handler.XenditHandler
+	h *XenditHandler
 }
 
 func (suite *XenditTestSuite) TestXenditHealthHandler() {
