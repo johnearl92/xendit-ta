@@ -9,7 +9,7 @@ This is a project implementation of the technical assessment
 - Organization
     - xendit
 - Members
-
+    - "john", "doe", "smith", "elastic", "invisible"
 
 ## Prerequisire
 

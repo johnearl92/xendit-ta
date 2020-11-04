@@ -29,7 +29,6 @@ spec:
         app: {{ template "xendit-ta.name" . }}
         name: {{ template "xendit-ta.name" . }}
     spec:
-      imagePullPolicy: {{ .Values.image.pullPolicy }}
       imagePullSecrets:
       - name: "xendit-ta-registry"
       {{- if .Values.affinity }}
@@ -48,6 +47,7 @@ spec:
       containers:
       - name: {{ template "xendit-ta.name" . }}
         image: "{{ .Values.image.name }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         volumeMounts:
         - name: config
           mountPath: /nonexistent

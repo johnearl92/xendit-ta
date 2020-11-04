@@ -56,7 +56,7 @@ generate-swagger:
 	@swagger mixin ./swagger/swagger-generated.json ./swagger/${SWAGGER_HOST} -o ./swagger/swagger.json
 	@echo 'Done.'
 
-build: deps gen generate-swagger
+build: deps wire gen generate-swagger
 	@echo '========================================'
 	@echo ' Building project'
 	@echo '========================================'

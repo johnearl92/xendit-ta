@@ -16,21 +16,10 @@
   },
   "host": "localhost:8080",
   "paths": {
-    "/account/{id}": {
+    "/health": {
       "get": {
-        "summary": "This will get the account with the given ID",
-        "operationId": "Account",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Account"
-            }
-          }
-        ],
+        "summary": "This will check if the server is up",
+        "operationId": "GenericRes",
         "responses": {
           "200": {
             "$ref": "#/responses/GenericRes"
