@@ -29,3 +29,7 @@ func (p *CommentList) ItemsPtr() interface{} {
 func (p *CommentList) Items() []*model.Comment {
 	return p.items
 }
+
+func (p *CommentList) SetItems(arg []*model.Comment) {
+	p.items = arg
+}

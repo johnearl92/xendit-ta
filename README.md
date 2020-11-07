@@ -3,6 +3,11 @@ XENDIT Technical Assessment
 
 This is a project implementation of the technical assessment 
 
+## What's inside
+- Docker deployment (docker-compose)
+- helm deployment (kubernetes)
+- Unit test via testify
+- Swagger UI to test (Added DB Migration Mocks to test see below)
 
 ## Before start
 ### DB Migration Mocks
