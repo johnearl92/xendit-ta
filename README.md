@@ -8,6 +8,7 @@ This is a project implementation of the technical assessment
 - helm deployment (kubernetes)
 - Unit test via testify
 - Swagger UI to test (Added DB Migration Mocks to test see below)
+- Helm Secret for config file
 
 ## Before start
 ### DB Migration Mocks
